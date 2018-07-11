@@ -81,14 +81,12 @@ def count_solutions(w, h, m):
 	generate_s_dict()
 
 	def helper_recursion(key, h, count):
-		print(key)
 		if h == 2:
 			return 1
 
 		else:
 			for key in s_dict[key]:
 				count += helper_recursion(key, h - 1, count)
-				print()
 
 			return count
 
@@ -103,7 +101,11 @@ def count_solutions(w, h, m):
 if __name__ == '__main__':
 	# Test values
 	value1 = count_solutions(9, 3, 100)
-	print(rows)
-	print(s_dict)
 	print(value1)
 	print(value1 == 8)
+
+	rows = []
+	s_dict = {}
+	value1 = count_solutions(32, 10, 10000)
+	print(value1)
+	print(value1 == 806844323190414)
