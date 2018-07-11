@@ -2,6 +2,7 @@ import itertools
 
 # Project Euler problem 215: Crack Free Walls
 rows = []
+s_dict = {}
 
 def generate_rows(row, max_width):
 	"""
@@ -17,13 +18,13 @@ def generate_rows(row, max_width):
 	# We only need a 2 x 1 brick, this is ok
 	if sum(row) + 2 == max_width:
 		row.append(2)
-		rows.append(row)
+		rows.append(tuple(row))
 		return
 
 	# We only need a 3 x 1 brick, this is ok
 	if sum(row) + 3 == max_width:
 		row.append(3)
-		rows.append(row)
+		rows.append(tuple(row))
 		return
 
 	# Call generate_row recursively to generate all
@@ -63,22 +64,46 @@ def is_solution(possible_solution):
 	return True
 
 
-def generate_solutions(max_height):
-	# generate subsets of length max_height from rows
-	return list(itertools.product(rows, repeat=max_height))
-	
+def generate_s_dict():
+	global s_dict
+
+	for row_key in rows:
+		for row_val in rows:
+			if is_solution([row_key] + [row_val]):
+				try:
+					s_dict[row_key] += [row_val] 
+				except:
+					s_dict[row_key] = [row_val]
+
 
 def count_solutions(w, h, m):
 	generate_rows([], w)
-	solutions = generate_solutions(h)
-	count = 0
-	for solution in solutions:
-		if is_solution(solution):
-			count += 1
+	generate_s_dict()
 
-	return count//2 % m
+	def helper_recursion(key, h, count):
+		print(key)
+		if h == 2:
+			return 1
+
+		else:
+			for key in s_dict[key]:
+				count += helper_recursion(key, h - 1, count)
+				print()
+
+			return count
+
+	count = 0
+	for key in s_dict.keys():
+		count += helper_recursion(key, h, 0)
+
+	return count % m
+
 
 
 if __name__ == '__main__':
 	# Test values
-	print(count_solutions(9, 3, 1000))
+	value1 = count_solutions(9, 3, 100)
+	print(rows)
+	print(s_dict)
+	print(value1)
+	print(value1 == 8)
